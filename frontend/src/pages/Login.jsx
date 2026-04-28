@@ -2,11 +2,13 @@ import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import './Auth.css'
 
 function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -22,28 +24,109 @@ function Login() {
   }
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '2rem', border: '1px solid #ddd', borderRadius: '8px' }}>
-      <h2>Welcome Back</h2>
-      <p>Login to your Bible App</p>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Email</label><br />
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginTop: '4px' }} required />
+    <div className="auth-wrapper">
+
+      {/* ── LEFT ── */}
+      <div className="auth-left">
+        <div>
+          <h1 className="auth-brand">Bibble</h1>
+          <p className="auth-tagline">
+            Find stillness in the Word and<br />rhythm in your soul.
+          </p>
+          <div className="auth-features">
+            <div className="feature-card">
+              <div className="feature-icon">🔥</div>
+              <div>
+                <p className="feature-title">Track your streaks</p>
+                <p className="feature-desc">Build a lasting habit with gentle daily reminders.</p>
+              </div>
+            </div>
+            <div className="auth-features-row">
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon">😊</div>
+                  <p className="feature-title">Discover verses by mood</p>
+                  <p className="feature-desc">Personalized scripture for every season.</p>
+                </div>
+              </div>
+              <div className="feature-card">
+                <div>
+                  <div className="feature-icon">🎵</div>
+                  <p className="feature-title">Sync your music</p>
+                  <p className="feature-desc">The ultimate sanctuary for your ears.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label>Password</label><br />
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginTop: '4px' }} required />
+        <p className="auth-footer-left">THE SUNSET SANCTUARY © 2024</p>
+      </div>
+
+      {/* ── RIGHT ── */}
+      <div className="auth-right">
+        <div className="auth-form-container">
+          <h2 className="auth-title">Welcome Back</h2>
+          <p className="auth-subtitle">Return to the golden hour.</p>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <form onSubmit={handleSubmit}>
+            <div className="auth-field">
+              <label className="auth-label">Email Address</label>
+              <input
+                className="auth-input"
+                type="email"
+                placeholder="hello@sanctuary.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="auth-field">
+              <label className="auth-label">Password</label>
+              <div className="auth-input-wrap">
+                <input
+                  className="auth-input"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                />
+                <button type="button" className="auth-eye" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? '🙈' : '👁'}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" className="auth-btn">
+              Sign In →
+            </button>
+          </form>
+
+          <div className="auth-divider"><span>OR JOIN WITH</span></div>
+
+          <div className="auth-social">
+            <button className="social-btn">
+              <span className="social-logo">G</span> Google
+            </button>
+            <button className="social-btn">
+              <span className="social-logo">iOS</span> Apple
+            </button>
+          </div>
+
+          <p className="auth-switch">
+            Don't have an account? <Link to="/signup" className="auth-link">Sign Up</Link>
+          </p>
         </div>
-        <button type="submit" style={{ width: '100%', padding: '10px', background: '#4F46E5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-          Login
-        </button>
-      </form>
-      <p style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Don't have an account? <Link to="/signup">Sign up</Link>
-      </p>
+
+        <div className="auth-footer-right">
+          <span>PRIVACY</span>
+          <span>TERMS</span>
+          <span>SUPPORT</span>
+        </div>
+      </div>
+
     </div>
   )
 }
