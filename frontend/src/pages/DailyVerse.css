@@ -375,3 +375,33 @@
   .dv-day-cell       { min-height: 48px; }
   .dv-cell-ref       { display: none; }
 }
+
+.playlist-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.pl-switch-btn {
+  padding: 0.3rem 0.7rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: rgba(200,185,165,0.45);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pl-switch-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: rgba(200,185,165,0.8);
+}
+
+.pl-switch-btn.active {
+  background: rgba(196,121,74,0.15);
+  border-color: #c4794a;
+  color: #c4794a;
+}

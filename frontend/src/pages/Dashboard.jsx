@@ -203,29 +203,33 @@ const { dailyVerse, dailyVerseText, fetchDailyVerse, favorites, notes } = useBib
             )}
           </div>
 
-          <div className="sidebar-card">
-            <div className="player-track">
-              <div className="player-art">🏛️</div>
-              <div>
-                <p className="player-title">Evening Reflections</p>
-                <p className="player-artist">SOLACE ENSEMBLE</p>
-              </div>
-            </div>
-            <div className="player-bar">
-              <div className="player-progress"></div>
-            </div>
-            <div className="player-times">
-              <span>1:24</span><span>4:45</span>
-            </div>
-            <div className="player-controls">
-              <button className="player-btn">⏮</button>
-              <button
-                className="player-btn play"
-                onClick={() => navigate('/bible')}
-              >▶</button>
-              <button className="player-btn">⏭</button>
+          
+        <div className="sidebar-card">
+          <p className="sidebar-label">SANCTUARY MUSIC</p>
+          <div className="player-track">
+            <div className="player-art">🌅</div>
+            <div>
+              <p className="player-title">Morning Worship</p>
+              <p className="player-artist">PEACEFUL · GOLDEN HOUR</p>
             </div>
           </div>
+          <iframe
+            width="100%"
+            height="120"
+            // NEW:
+src="https://www.youtube.com/embed/yhFccHgf_FQ?rel=0"
+            allow="encrypted-media"
+            allowFullScreen
+            style={{ border: 'none', borderRadius: '10px', marginTop: '0.75rem' }}
+          />
+          <button
+            className="reflection-btn-secondary"
+            style={{ marginTop: '0.6rem' }}
+            onClick={() => navigate('/library')}
+          >
+            View All Playlists →
+          </button>
+        </div>
 
           <div className="sidebar-card journal-card">
             <div className="journal-card-top">

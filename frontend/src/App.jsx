@@ -8,6 +8,7 @@ import BibleReader from './pages/BibleReader'
 import Journal from './pages/Journal'
 import Favorites from './pages/Favorites'
 import DailyVerse from './pages/DailyVerse'
+import Library from './pages/Library'
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token')
@@ -31,7 +32,7 @@ function App() {
           <Route path="/signup"    element={<Signup />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/bible"     element={<ProtectedRoute><BibleReader /></ProtectedRoute>} />
-          <Route path="/library"   element={<ProtectedRoute><ComingSoon page="Library" /></ProtectedRoute>} />
+<Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
           <Route path="/journal" element={<ProtectedRoute><Journal /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><ComingSoon page="Community" /></ProtectedRoute>} />
 

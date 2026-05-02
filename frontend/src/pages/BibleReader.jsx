@@ -28,10 +28,20 @@ const MOOD_SUGGESTIONS = [
   },
 ]
 
+
+const PLAYLISTS = [
+  { title: 'Morning Worship',    mood: 'Peaceful',  icon: '🌅', youtubeId: 'yhFccHgf_FQ' },
+  { title: 'Anxiety Relief',     mood: 'Anxious',   icon: '🌿', youtubeId: '512YPP7ssDQ' },
+  { title: 'Songs of Strength',  mood: 'Strength',  icon: '⚡', youtubeId: 'hZlpSIuU7ZE' },
+  { title: 'Grateful Heart',     mood: 'Grateful',  icon: '🌸', youtubeId: 'keJal6ftePU' },
+  { title: 'Joyful Noise',       mood: 'Joyful',    icon: '☀️', youtubeId: 'f2oxGYpuLkw' },
+]
+
 function BibleReader() {
 
 const location = useLocation()
 const navigate = useNavigate()
+const [activePlaylist, setActivePlaylist] = useState(PLAYLISTS[0])
 const {
   books, chapters, verses,
   currentBook, setCurrentBook,
@@ -328,50 +338,67 @@ if (t.key === 'DAILY VERSE') { navigate('/daily-verse'); return }
         </main>
 
      
-        <aside className="reader-right">
-          <p className="right-section-label">SANCTUARY PLAYLISTS</p>
-          <div className="playlist-card">
-            <div className="playlist-art">🌅</div>
-            <div>
-              <p className="playlist-name">Golden Hour Ambient</p>
-              <p className="playlist-vol">RESTORATION VOL. 1</p>
-            </div>
-          </div>
-          <div className="playlist-controls">
-            <button className="pl-btn">⇄</button>
-            <button className="pl-btn">⏮</button>
-            <button className="pl-btn play">▶</button>
-            <button className="pl-btn">⏭</button>
-            <button className="pl-btn">↻</button>
-          </div>
-          <div className="playlist-bar"><div className="playlist-progress"></div></div>
-          <div className="playlist-times"><span>1:45</span><span>4:20</span></div>
+   
+      <aside className="reader-right">
+        <p className="right-section-label">SANCTUARY PLAYLISTS</p>
 
-          <div className="mood-suggestions">
-            {MOOD_SUGGESTIONS.map((s, i) => (
-              <div key={i} className="mood-suggestion-card">
-                <h4 className="suggestion-title">{s.title}</h4>
-                <p className="suggestion-desc">{s.desc}</p>
-                
-            <button
-            className="suggestion-btn"
-            onClick={() => {
-                fetchChapters(s.bookId)
-                fetchChapterContent(s.chapterId)
-                setCurrentBook({ id: s.bookId, name: s.bookName })
-                setCurrentChapter({ id: s.chapterId, number: s.chapterId.split('.')[1] })
-                setTimeout(() => {
-                const el = document.getElementById(`verse-${s.verseNumber}`)
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                }, 800)
-            }}
-            >
-            READ SELECTION →
-            </button>
-              </div>
-            ))}
+        {/* Active playlist embed */}
+        <div className="playlist-card">
+          <div className="playlist-art">🌅</div>
+          <div>
+            <p className="playlist-name">{activePlaylist.title}</p>
+            <p className="playlist-vol">{activePlaylist.mood.toUpperCase()}</p>
           </div>
-        </aside>
+        </div>
+
+        <iframe
+          key={activePlaylist.youtubeId}
+          width="100%"
+          height="140"
+          src={`https://www.youtube.com/embed/${activePlaylist.youtubeId}?rel=0`}
+          allow="encrypted-media"
+          allowFullScreen
+          style={{ border: 'none', borderRadius: '10px', marginBottom: '0.75rem' }}
+        />
+
+        {/* Playlist switcher */}
+        <div className="playlist-switcher">
+          {PLAYLISTS.map((pl, i) => (
+            <button
+              key={i}
+              className={`pl-switch-btn ${activePlaylist.youtubeId === pl.youtubeId ? 'active' : ''}`}
+              onClick={() => setActivePlaylist(pl)}
+            >
+              {pl.icon} {pl.mood}
+            </button>
+          ))}
+        </div>
+
+        {/* Mood suggestions */}
+        <div className="mood-suggestions" style={{ marginTop: '1rem' }}>
+          {MOOD_SUGGESTIONS.map((s, i) => (
+            <div key={i} className="mood-suggestion-card">
+              <h4 className="suggestion-title">{s.title}</h4>
+              <p className="suggestion-desc">{s.desc}</p>
+              <button
+                className="suggestion-btn"
+                onClick={() => {
+                  fetchChapters(s.bookId)
+                  fetchChapterContent(s.chapterId)
+                  setCurrentBook({ id: s.bookId, name: s.bookName })
+                  setCurrentChapter({ id: s.chapterId, number: s.chapterId.split('.')[1] })
+                  setTimeout(() => {
+                    const el = document.getElementById(`verse-${s.verseNumber}`)
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  }, 800)
+                }}
+              >
+                READ SELECTION →
+              </button>
+            </div>
+          ))}
+        </div>
+      </aside>
 
       </div>
     </div>

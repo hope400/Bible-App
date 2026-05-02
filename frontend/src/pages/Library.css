@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Jost:wght@300;400;500&display=swap');
+
+.lib-wrapper {
+  min-height: 100vh;
+  background: #0d0b09;
+  color: #e8ddd0;
+  font-family: 'Jost', sans-serif;
+}
+
+/* ── HEADER ── */
+.lib-header {
+  text-align: center;
+  padding: 3rem 2rem 0;
+  background: linear-gradient(to bottom, rgba(184,145,58,0.06), transparent);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.lib-eyebrow {
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  color: rgba(200,185,165,0.3);
+  margin-bottom: 0.5rem;
+}
+
+.lib-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  color: #d4956a;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.lib-subtitle {
+  font-size: 0.85rem;
+  color: rgba(200,185,165,0.35);
+  margin-bottom: 2rem;
+}
+
+/* ── TABS ── */
+.lib-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.lib-tab {
+  padding: 0.85rem 2rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(200,185,165,0.4);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+}
+
+.lib-tab:hover { color: rgba(200,185,165,0.75); }
+
+.lib-tab.active {
+  color: #d4956a;
+  border-bottom-color: #d4956a;
+}
+
+/* ── CONTENT ── */
+.lib-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 2rem 4rem;
+}
+
+/* ── CATEGORIES ── */
+.lib-categories {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.lib-cat-btn {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: transparent;
+  color: rgba(200,185,165,0.5);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lib-cat-btn:hover {
+  border-color: rgba(200,185,165,0.3);
+  color: rgba(200,185,165,0.85);
+}
+
+.lib-cat-btn.active {
+  background: #c4794a;
+  border-color: #c4794a;
+  color: #1a0e08;
+  font-weight: 500;
+}
+
+/* ── PLANS GRID ── */
+.lib-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.lib-plan-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.lib-plan-card:hover { border-color: rgba(184,145,58,0.2); }
+
+.lib-plan-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.lib-plan-icon { font-size: 1.8rem; }
+
+.lib-plan-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+}
+
+.lib-plan-category {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: #b8913a;
+  text-transform: uppercase;
+  background: rgba(184,145,58,0.1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+}
+
+.lib-plan-duration {
+  font-size: 0.62rem;
+  color: rgba(200,185,165,0.3);
+  letter-spacing: 0.08em;
+}
+
+.lib-plan-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: #e8ddd0;
+  margin-bottom: 0.2rem;
+}
+
+.lib-plan-subtitle {
+  font-size: 0.75rem;
+  color: rgba(200,185,165,0.4);
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.lib-plan-desc {
+  font-size: 0.82rem;
+  color: rgba(200,185,165,0.55);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.lib-plan-expand {
+  background: transparent;
+  border: 1px solid rgba(184,145,58,0.3);
+  color: #b8913a;
+  padding: 0.4rem 1rem;
+  border-radius: 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.lib-plan-expand:hover { background: rgba(184,145,58,0.08); }
+
+/* ── VERSE LIST ── */
+.lib-verse-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 0.75rem;
+  animation: riseIn .2s ease both;
+}
+
+.lib-verse-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.lib-verse-item:hover { background: rgba(255,255,255,0.04); }
+
+.lib-verse-day {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: rgba(200,185,165,0.3);
+  min-width: 40px;
+  text-transform: uppercase;
+}
+
+.lib-verse-ref {
+  flex: 1;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: rgba(200,185,165,0.75);
+}
+
+.lib-verse-arrow {
+  font-size: 0.75rem;
+  color: rgba(196,121,74,0.4);
+  transition: color 0.15s;
+}
+
+.lib-verse-item:hover .lib-verse-arrow { color: #c4794a; }
+
+/* ── MUSIC ── */
+.lib-music-intro {
+  font-size: 0.85rem;
+  color: rgba(200,185,165,0.35);
+  font-style: italic;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.lib-music-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.lib-music-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  padding: 1.25rem;
+  transition: border-color 0.2s;
+}
+
+.lib-music-card:hover { border-color: rgba(196,121,74,0.2); }
+
+.lib-music-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.lib-music-icon { font-size: 2rem; flex-shrink: 0; }
+
+.lib-music-title {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: #e8ddd0;
+  margin-bottom: 0.2rem;
+}
+
+.lib-music-desc {
+  font-size: 0.75rem;
+  color: rgba(200,185,165,0.4);
+  margin-bottom: 0.4rem;
+  line-height: 1.4;
+}
+
+.lib-music-mood {
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: #b8913a;
+  background: rgba(184,145,58,0.1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.lib-music-btn {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.lib-music-btn.play {
+  background: #c4794a;
+  color: #1a0e08;
+  font-weight: 500;
+}
+
+.lib-music-btn.play:hover { background: #d4895a; }
+
+.lib-music-btn.stop {
+  background: rgba(255,255,255,0.06);
+  color: rgba(200,185,165,0.6);
+  margin-top: 0.5rem;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.lib-music-btn.stop:hover { background: rgba(255,255,255,0.1); }
+
+.lib-music-player { animation: riseIn .2s ease both; }
+
+/* ── FOOTER ── */
+.lib-footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.lib-footer p {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: rgba(200,185,165,0.2);
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .lib-plans-grid, .lib-music-grid { grid-template-columns: 1fr; }
+  .lib-content { padding: 1.5rem 1rem 3rem; }
+}
