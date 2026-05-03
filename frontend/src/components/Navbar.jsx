@@ -13,10 +13,10 @@ function Navbar() {
   }
 
   const navLinks = [
-    { label: 'Scripture', path: '/bible' },
-    { label: 'Library', path: '/library' },
-    { label: 'Journal', path: '/journal' },
-    { label: 'Community', path: '/community' },
+    { label: 'Scripture',  path: '/bible' },
+    { label: 'Library',    path: '/library' },
+    { label: 'Journal',    path: '/journal' },
+    { label: 'Community',  path: '/community' },
   ]
 
   return (
@@ -37,8 +37,19 @@ function Navbar() {
 
       <div className="navbar-right">
         <button className="nav-icon-btn" title="Streak">🔥</button>
-        <button className="nav-icon-btn" title="Settings">⚙️</button>
-        <div className="nav-avatar" onClick={handleLogout} title="Logout">
+
+        {/* Settings icon — now navigates to /settings */}
+        <Link
+          to="/settings"
+          className={`nav-icon-btn ${location.pathname === '/settings' ? 'active' : ''}`}
+          title="Settings"
+          style={{ textDecoration: 'none' }}
+        >
+          ⚙️
+        </Link>
+
+        {/* Avatar — shows first letter of name, click to logout */}
+        <div className="nav-avatar" onClick={handleLogout} title="Click to logout">
           {user?.name?.charAt(0).toUpperCase() || 'U'}
         </div>
       </div>

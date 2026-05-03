@@ -2,21 +2,33 @@ const express = require('express');
 const router = express.Router();
 const Journal = require('../models/Journal');
 const { protect } = require('../middleware/auth');
+const socketEmitter = require('../socket'); // No circular dependency!
 
-
+// CREATE
 router.post('/', protect, async (req, res) => {
   try {
     const { title, body, mood, verseRef, isPrivate } = req.body;
     const journal = await Journal.create({
       userId: req.user._id, title, body, mood, verseRef, isPrivate
     });
+
+    // Broadcast real activity to community — this never blocks the save
+    socketEmitter.emit('activity:new', {
+      name: req.user.name,
+      action: mood
+        ? `is journaling — "${title || 'Untitled'}" (${mood})`
+        : `wrote a journal entry`,
+      icon: '📝',
+      timestamp: new Date().toISOString()
+    });
+
     res.status(201).json(journal);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-
+// READ all (current user only)
 router.get('/', protect, async (req, res) => {
   try {
     const journals = await Journal.find({ userId: req.user._id }).sort({ createdAt: -1 });
@@ -26,7 +38,7 @@ router.get('/', protect, async (req, res) => {
   }
 });
 
-
+// READ one
 router.get('/:id', protect, async (req, res) => {
   try {
     const journal = await Journal.findById(req.params.id);
@@ -37,7 +49,7 @@ router.get('/:id', protect, async (req, res) => {
   }
 });
 
-
+// UPDATE
 router.put('/:id', protect, async (req, res) => {
   try {
     const journal = await Journal.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -47,7 +59,7 @@ router.put('/:id', protect, async (req, res) => {
   }
 });
 
-
+// DELETE
 router.delete('/:id', protect, async (req, res) => {
   try {
     await Journal.findByIdAndDelete(req.params.id);

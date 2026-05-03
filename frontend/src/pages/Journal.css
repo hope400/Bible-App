@@ -188,20 +188,25 @@
 }
 
 .new-entry-save {
-  background: #c4794a;
+  background: linear-gradient(135deg, #c4794a, #b8913a);
   border: none;
   border-radius: 20px;
-  padding: 0.55rem 1.5rem;
+  padding: 0.65rem 1.75rem;
   color: #1a0e08;
   font-family: 'Jost', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
-  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 12px rgba(196,121,74,0.25);
 }
 
-.new-entry-save:hover { background: #d4895a; }
+.new-entry-save:hover {
+  background: linear-gradient(135deg, #d4895a, #c8a14a);
+  box-shadow: 0 4px 18px rgba(196,121,74,0.35);
+  transform: translateY(-1px);
+}
 
 /* ── SEARCH ── */
 .journal-search-bar {
@@ -309,15 +314,6 @@
   background: rgba(184,145,58,0.04);
 }
 
-.journal-entry.free-entry {
-  border-color: rgba(196,121,74,0.1);
-}
-
-.journal-entry.free-entry.expanded {
-  border-color: rgba(196,121,74,0.35);
-  background: rgba(196,121,74,0.04);
-}
-
 /* Entry ribbon */
 .entry-ribbon {
   width: 48px;
@@ -390,17 +386,6 @@
   letter-spacing: 0.08em;
 }
 
-.entry-free-badge {
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: rgba(196,121,74,0.55);
-  background: rgba(196,121,74,0.08);
-  border: 1px solid rgba(196,121,74,0.15);
-  border-radius: 8px;
-  padding: 0.15rem 0.5rem;
-  text-transform: uppercase;
-}
-
 .entry-chevron {
   font-size: 0.7rem;
   color: rgba(200,185,165,0.3);
@@ -466,66 +451,98 @@
 
 .entry-edit-textarea::placeholder { color: rgba(200,185,165,0.2); }
 
-/* Actions */
+/* ── ENTRY ACTION BUTTONS — improved ── */
 .entry-actions {
   display: flex;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem 1.25rem;
+  gap: 0.6rem;
+  padding: 1rem 1.5rem 1.25rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .entry-btn {
-  padding: 0.4rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 1.1rem;
   border-radius: 20px;
   font-family: 'Jost', sans-serif;
   font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.18s;
+  transition: all 0.18s ease;
   border: 1px solid;
+  white-space: nowrap;
 }
 
+/* Edit button — golden outline */
 .entry-btn.edit {
   background: transparent;
-  border-color: rgba(184,145,58,0.35);
+  border-color: rgba(184,145,58,0.4);
   color: #b8913a;
 }
-.entry-btn.edit:hover { background: rgba(184,145,58,0.1); }
-
-.entry-btn.save {
-  background: #c4794a;
-  border-color: #c4794a;
-  color: #1a0e08;
-  font-weight: 500;
+.entry-btn.edit:hover {
+  background: rgba(184,145,58,0.12);
+  border-color: rgba(184,145,58,0.65);
+  color: #d4a84a;
+  transform: translateY(-1px);
 }
-.entry-btn.save:hover { background: #d4895a; border-color: #d4895a; }
 
+/* Save Changes button — filled warm */
+.entry-btn.save {
+  background: linear-gradient(135deg, #c4794a, #b8913a);
+  border-color: transparent;
+  color: #1a0e08;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(196,121,74,0.2);
+}
+.entry-btn.save:hover {
+  background: linear-gradient(135deg, #d4895a, #c8a14a);
+  box-shadow: 0 4px 16px rgba(196,121,74,0.35);
+  transform: translateY(-1px);
+}
+
+/* Cancel button — subtle ghost */
 .entry-btn.cancel {
   background: transparent;
   border-color: rgba(255,255,255,0.1);
   color: rgba(200,185,165,0.4);
 }
-.entry-btn.cancel:hover { border-color: rgba(255,255,255,0.2); color: rgba(200,185,165,0.7); }
+.entry-btn.cancel:hover {
+  border-color: rgba(255,255,255,0.22);
+  color: rgba(200,185,165,0.75);
+  background: rgba(255,255,255,0.04);
+}
 
+/* Go to verse button — muted teal-ish */
 .entry-btn.go {
   background: transparent;
-  border-color: rgba(255,255,255,0.1);
+  border-color: rgba(184,145,58,0.2);
   color: rgba(200,185,165,0.45);
 }
-.entry-btn.go:hover { border-color: rgba(255,255,255,0.2); color: rgba(200,185,165,0.8); }
+.entry-btn.go:hover {
+  border-color: rgba(184,145,58,0.4);
+  color: rgba(200,185,165,0.8);
+  background: rgba(184,145,58,0.07);
+}
 
+/* Delete button — red danger, pushed to the right */
 .entry-btn.delete {
   background: transparent;
   border-color: rgba(200,80,80,0.2);
-  color: rgba(200,100,100,0.5);
+  color: rgba(200,100,100,0.45);
   margin-left: auto;
 }
 .entry-btn.delete:hover {
-  background: rgba(200,80,80,0.08);
-  border-color: rgba(200,80,80,0.4);
-  color: rgba(220,120,120,0.8);
+  background: rgba(200,80,80,0.1);
+  border-color: rgba(220,100,100,0.5);
+  color: rgba(240,130,130,0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 10px rgba(200,80,80,0.15);
 }
 
-/* No results */
+/* ── FOOTER ── */
 .no-results {
   text-align: center;
   color: rgba(200,185,165,0.3);
@@ -534,7 +551,6 @@
   padding: 3rem;
 }
 
-/* ── FOOTER ── */
 .journal-footer {
   text-align: center;
   padding: 2rem;

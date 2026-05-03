@@ -18,13 +18,63 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.log('MongoDB error:', err));
 
+// ── Initialise socket helper BEFORE importing routes ──────────
+const socketEmitter = require('./socket');
+socketEmitter.init(io);
+
+// ── Track live connected users ────────────────────────────────
+const connectedUsers = new Map();
+
+function broadcastMembers() {
+  const members = Array.from(connectedUsers.values());
+  io.emit('members:update', { count: members.length, members });
+}
+
 io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+  console.log('Socket connected:', socket.id);
+
+  // Frontend sends user info when landing on Community page
+  socket.on('user:join', ({ name, userId }) => {
+    connectedUsers.set(socket.id, {
+      name: name || 'Anonymous',
+      userId,
+      action: 'Just joined the sanctuary',
+      socketId: socket.id
+    });
+    broadcastMembers();
+    socketEmitter.emit('activity:new', {
+      name: name || 'Someone',
+      action: 'joined the sanctuary',
+      icon: '🌅',
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Frontend can update what the user is currently doing
+  socket.on('user:action', ({ action, icon }) => {
+    const user = connectedUsers.get(socket.id);
+    if (user) {
+      user.action = action;
+      connectedUsers.set(socket.id, user);
+      broadcastMembers();
+      socketEmitter.emit('activity:new', {
+        name: user.name, action, icon: icon || '✨',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
+    const user = connectedUsers.get(socket.id);
+    if (user) {
+      console.log(`${user.name} disconnected`);
+      connectedUsers.delete(socket.id);
+      broadcastMembers();
+    }
   });
 });
 
+// ── Routes ────────────────────────────────────────────────────
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
