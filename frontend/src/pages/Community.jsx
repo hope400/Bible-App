@@ -24,7 +24,6 @@ function ToastContainer({ toasts, onClose }) {
   )
 }
 
-
 function Community() {
   const { user, token } = useAuth()
 
@@ -35,7 +34,6 @@ function Community() {
   const [posting,        setPosting]        = useState(false)
   const [openComments,   setOpenComments]   = useState({})
   const [commentInputs,  setCommentInputs]  = useState({})
-
 
   const [memberCount,    setMemberCount]    = useState(0)
   const [liveMembers,    setLiveMembers]    = useState([])
@@ -64,18 +62,26 @@ function Community() {
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 350)
   }, [])
 
-
+  // ── SOCKET SETUP ──
   useEffect(() => {
-    const socket = io(API_URL, { transports: ['websocket', 'polling'] })
+    const socket = io(API_URL, {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 1000,
+      timeout: 20000,
+    })
     socketRef.current = socket
 
-    socket.on('connect', () => {
-     
+    const joinRoom = () => {
       socket.emit('user:join', {
         name: user?.name || 'Anonymous',
         userId: user?._id
       })
-    })
+    }
+
+    socket.on('connect', joinRoom)
+    socket.on('reconnect', joinRoom)
 
     socket.on('members:update', ({ count, members }) => {
       setMemberCount(count)
@@ -87,18 +93,16 @@ function Community() {
       setRecentActivity(prev => [activity, ...prev].slice(0, 6))
     })
 
-
-socket.on('post:created', (newPost) => {
-  setPosts(prev => {
-    if (prev.find(p => p._id === newPost._id)) return prev
-    return [newPost, ...prev]
-  })
-  // Only toast if it's NOT the current user's post
-  if (newPost.userId?._id !== user?._id && newPost.userId !== user?._id) {
-    addToast('✨', 'New reflection shared',
-      `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
-  }
-})
+    socket.on('post:created', (newPost) => {
+      setPosts(prev => {
+        if (prev.find(p => p._id === newPost._id)) return prev
+        return [newPost, ...prev]
+      })
+      if (newPost.userId?._id !== user?._id && newPost.userId !== user?._id) {
+        addToast('✨', 'New reflection shared',
+          `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
+      }
+    })
 
     socket.on('post:deleted', ({ postId }) => {
       setPosts(prev => prev.filter(p => p._id !== postId))
@@ -114,7 +118,7 @@ socket.on('post:created', (newPost) => {
     return () => socket.disconnect()
   }, [user, addToast])
 
-  
+  // ── FETCH POSTS ──
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -130,31 +134,25 @@ socket.on('post:created', (newPost) => {
     fetchPosts()
   }, [authHeader])
 
-
-
-const handlePost = async () => {
-  if (!content.trim()) return
-  setPosting(true)
-  try {
-    const res = await axios.post(`${API_URL}/api/posts`, { content, verseRef }, authHeader())
-    
-    setPosts(prev => {
-      if (prev.find(p => p._id === res.data._id)) return prev
-      return [res.data, ...prev]
-    })
-    setContent('')
-    setVerseRef('')
-
-  } catch (err) {
-    console.error('Post error:', err)
-    if (err.response?.status !== 201) {
+  // ── HANDLERS ──
+  const handlePost = async () => {
+    if (!content.trim()) return
+    setPosting(true)
+    try {
+      const res = await axios.post(`${API_URL}/api/posts`, { content, verseRef }, authHeader())
+      setPosts(prev => {
+        if (prev.find(p => p._id === res.data._id)) return prev
+        return [res.data, ...prev]
+      })
+      setContent('')
+      setVerseRef('')
+    } catch (err) {
+      console.error('Post error:', err)
       addToast('⚠️', 'Could not post', 'Something went wrong. Try again.')
+    } finally {
+      setPosting(false)
     }
-  } finally {
-
-    setPosting(false)
   }
-}
 
   const handleLike = async (postId) => {
     try {
@@ -165,45 +163,41 @@ const handlePost = async () => {
     }
   }
 
-const handleDelete = async (postId) => {
-  try {
-    setPosts(prev => prev.filter(p => p._id !== postId))
-    await axios.delete(`${API_URL}/api/posts/${postId}`, authHeader())
-    addToast('🗑️', 'Post removed', 'Your reflection has been deleted.')
-  } catch (err) {
-    console.error('Delete failed:', err)
-    // Refetch if delete failed
-    const res = await axios.get(`${API_URL}/api/posts`, authHeader())
-    setPosts(res.data)
-  }
-}
-
-
-const handleComment = async (postId) => {
-  const text = commentInputs[postId]?.trim()
-  if (!text) return
-  const currentComments = posts.find(p => p._id === postId)?.comments || []
-  const newComment = { userId: { name: user?.name || 'You', _id: user?._id }, text, _id: Date.now() }
-  // Optimistic update
-  setPosts(prev => prev.map(p =>
-    p._id === postId ? { ...p, comments: [...currentComments, newComment] } : p
-  ))
-  setCommentInputs(prev => ({ ...prev, [postId]: '' }))
-  try {
-    const res = await axios.put(`${API_URL}/api/posts/${postId}`,
-      { comments: [...currentComments, { userId: user?._id, text }] }, authHeader())
-    setPosts(prev => prev.map(p => p._id === postId ? res.data : p))
-    if (socketRef.current) {
-      socketRef.current.emit('user:action', {
-        action: 'commented on a reflection', icon: '💬'
-      })
+  const handleDelete = async (postId) => {
+    try {
+      setPosts(prev => prev.filter(p => p._id !== postId))
+      await axios.delete(`${API_URL}/api/posts/${postId}`, authHeader())
+      addToast('🗑️', 'Post removed', 'Your reflection has been deleted.')
+    } catch (err) {
+      console.error('Delete failed:', err)
+      const res = await axios.get(`${API_URL}/api/posts`, authHeader())
+      setPosts(res.data)
     }
-  } catch (err) {
-    console.error('Comment failed:', err)
   }
-}
 
-  
+  const handleComment = async (postId) => {
+    const text = commentInputs[postId]?.trim()
+    if (!text) return
+    const currentComments = posts.find(p => p._id === postId)?.comments || []
+    const newComment = { userId: { name: user?.name || 'You', _id: user?._id }, text, _id: Date.now() }
+    setPosts(prev => prev.map(p =>
+      p._id === postId ? { ...p, comments: [...currentComments, newComment] } : p
+    ))
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }))
+    try {
+      const res = await axios.put(`${API_URL}/api/posts/${postId}`,
+        { comments: [...currentComments, { userId: user?._id, text }] }, authHeader())
+      setPosts(prev => prev.map(p => p._id === postId ? res.data : p))
+      if (socketRef.current) {
+        socketRef.current.emit('user:action', {
+          action: 'commented on a reflection', icon: '💬'
+        })
+      }
+    } catch (err) {
+      console.error('Comment failed:', err)
+    }
+  }
+
   const isLiked = (post) => {
     const userId = user?._id
     return post.likes?.some(id =>
@@ -237,19 +231,17 @@ const handleComment = async (postId) => {
       <Navbar />
       <ToastContainer toasts={toasts} onClose={removeToast} />
 
-      {/* ── PULSE BAR — 100% real activity ── */}
+      {/* ── PULSE BAR ── */}
       <div className="pulse-bar">
         <div className="pulse-label">
           <div className="pulse-dot" />
           <span className="pulse-text">Sanctuary Pulse</span>
         </div>
         <div className="pulse-scroll">
-          {/* Always show live count as first chip */}
           <div className="pulse-chip">
             <span className="pulse-chip-highlight">{memberCount}</span>
             &nbsp;member{memberCount !== 1 ? 's' : ''} live
           </div>
-          {/* Real activity events */}
           {pulseItems.map((item, i) => (
             <div key={i} className="pulse-chip">
               {item.icon}&nbsp;
@@ -386,7 +378,7 @@ const handleComment = async (postId) => {
             </button>
           </div>
 
-          {/* REAL Live Activity */}
+          {/* Live Activity */}
           <div className="live-box">
             <div className="live-box-header">
               <span className="live-box-title">Live Activity</span>
@@ -416,7 +408,7 @@ const handleComment = async (postId) => {
             )}
           </div>
 
-          {/* REAL Members Live */}
+          {/* Members Live */}
           <div className="community-mood-card">
             <p className="mood-card-eyebrow">Members Live Now</p>
             <h4 className="mood-card-title">
@@ -440,7 +432,6 @@ const handleComment = async (postId) => {
                 }
               </span>
             </div>
-            {/* REAL list of connected users */}
             {liveMembers.length > 0 && (
               <div style={{ marginTop: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {liveMembers.slice(0, 5).map((m, i) => (
