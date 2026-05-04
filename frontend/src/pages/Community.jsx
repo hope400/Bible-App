@@ -127,19 +127,25 @@ function Community() {
   }, [authHeader])
 
 
-  const handlePost = async () => {
-    if (!content.trim()) return
-    setPosting(true)
-    try {
-      await axios.post(`${API_URL}/api/posts`, { content, verseRef }, authHeader())
-      setContent('')
-      setVerseRef('')
-    } catch (err) {
-      addToast('⚠️', 'Could not post', 'Something went wrong. Try again.')
-    } finally {
-      setPosting(false)
-    }
+
+const handlePost = async () => {
+  if (!content.trim()) return
+  setPosting(true)
+  try {
+    const res = await axios.post(`${API_URL}/api/posts`, { content, verseRef }, authHeader())
+    
+    setPosts(prev => {
+      if (prev.find(p => p._id === res.data._id)) return prev
+      return [res.data, ...prev]
+    })
+    setContent('')
+    setVerseRef('')
+  } catch (err) {
+    addToast('⚠️', 'Could not post', 'Something went wrong. Try again.')
+  } finally {
+    setPosting(false)
   }
+}
 
   const handleLike = async (postId) => {
     try {
@@ -150,41 +156,43 @@ function Community() {
     }
   }
 
-  const handleDelete = async (postId) => {
-    try {
-      await axios.delete(`${API_URL}/api/posts/${postId}`, authHeader())
-      addToast('🗑️', 'Post removed', 'Your reflection has been deleted.')
-    } catch (err) {
-      console.error('Delete failed:', err)
-    }
+const handleDelete = async (postId) => {
+  try {
+    setPosts(prev => prev.filter(p => p._id !== postId))
+    await axios.delete(`${API_URL}/api/posts/${postId}`, authHeader())
+    addToast('🗑️', 'Post removed', 'Your reflection has been deleted.')
+  } catch (err) {
+    console.error('Delete failed:', err)
+    // Refetch if delete failed
+    const res = await axios.get(`${API_URL}/api/posts`, authHeader())
+    setPosts(res.data)
   }
+}
 
-  const handleComment = async (postId) => {
-    const text = commentInputs[postId]?.trim()
-    if (!text) return
-    const currentComments = posts.find(p => p._id === postId)?.comments || []
-    const newComment = { userId: { name: user?.name || 'You' }, text, _id: Date.now() }
-    const updatedComments = [...currentComments, newComment]
-    try {
-      await axios.put(`${API_URL}/api/posts/${postId}`,
-        { comments: updatedComments }, authHeader())
-      setPosts(prev => prev.map(p =>
-        p._id === postId ? { ...p, comments: updatedComments } : p
-      ))
-      setCommentInputs(prev => ({ ...prev, [postId]: '' }))
-      if (socketRef.current) {
-        socketRef.current.emit('user:action', {
-          action: 'commented on a reflection', icon: '💬'
-        })
-      }
-    } catch (err) {
-     
-      setPosts(prev => prev.map(p =>
-        p._id === postId ? { ...p, comments: updatedComments } : p
-      ))
-      setCommentInputs(prev => ({ ...prev, [postId]: '' }))
+
+const handleComment = async (postId) => {
+  const text = commentInputs[postId]?.trim()
+  if (!text) return
+  const currentComments = posts.find(p => p._id === postId)?.comments || []
+  const newComment = { userId: { name: user?.name || 'You', _id: user?._id }, text, _id: Date.now() }
+  // Optimistic update
+  setPosts(prev => prev.map(p =>
+    p._id === postId ? { ...p, comments: [...currentComments, newComment] } : p
+  ))
+  setCommentInputs(prev => ({ ...prev, [postId]: '' }))
+  try {
+    const res = await axios.put(`${API_URL}/api/posts/${postId}`,
+      { comments: [...currentComments, { userId: user?._id, text }] }, authHeader())
+    setPosts(prev => prev.map(p => p._id === postId ? res.data : p))
+    if (socketRef.current) {
+      socketRef.current.emit('user:action', {
+        action: 'commented on a reflection', icon: '💬'
+      })
     }
+  } catch (err) {
+    console.error('Comment failed:', err)
   }
+}
 
   
   const isLiked = (post) => {
