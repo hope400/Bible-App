@@ -7,7 +7,6 @@ import './Community.css'
 
 const API_URL = import.meta.env.VITE_API_URL
 
-// ─── TOAST COMPONENT ───────────────────────────────────────────
 function ToastContainer({ toasts, onClose }) {
   return (
     <div className="toast-container">
@@ -25,7 +24,7 @@ function ToastContainer({ toasts, onClose }) {
   )
 }
 
-// ─── MAIN COMPONENT ────────────────────────────────────────────
+
 function Community() {
   const { user, token } = useAuth()
 
@@ -37,7 +36,7 @@ function Community() {
   const [openComments,   setOpenComments]   = useState({})
   const [commentInputs,  setCommentInputs]  = useState({})
 
-  // ALL REAL — from socket events
+
   const [memberCount,    setMemberCount]    = useState(0)
   const [liveMembers,    setLiveMembers]    = useState([])
   const [pulseItems,     setPulseItems]     = useState([])
@@ -65,32 +64,29 @@ function Community() {
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 350)
   }, [])
 
-  // ── SOCKET SETUP ─────────────────────────────────────────────
+
   useEffect(() => {
     const socket = io(API_URL, { transports: ['websocket', 'polling'] })
     socketRef.current = socket
 
     socket.on('connect', () => {
-      // Tell the server who we are — this is what makes member count REAL
+     
       socket.emit('user:join', {
         name: user?.name || 'Anonymous',
         userId: user?._id
       })
     })
 
-    // REAL member count + live member list from server
     socket.on('members:update', ({ count, members }) => {
       setMemberCount(count)
       setLiveMembers(members)
     })
 
-    // REAL activity feed (posts, likes, joins, journals)
     socket.on('activity:new', (activity) => {
       setPulseItems(prev => [activity, ...prev].slice(0, 15))
       setRecentActivity(prev => [activity, ...prev].slice(0, 6))
     })
 
-    // REAL new post — appears live for everyone
     socket.on('post:created', (newPost) => {
       setPosts(prev => {
         if (prev.find(p => p._id === newPost._id)) return prev
@@ -100,12 +96,10 @@ function Community() {
         `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
     })
 
-    // REAL delete — disappears for everyone live
     socket.on('post:deleted', ({ postId }) => {
       setPosts(prev => prev.filter(p => p._id !== postId))
     })
 
-    // REAL like notification
     socket.on('notification:new', (data) => {
       if (!data.targetUserId || data.targetUserId === user?._id) {
         addToast('❤️', 'Someone liked your post',
@@ -116,7 +110,7 @@ function Community() {
     return () => socket.disconnect()
   }, [user, addToast])
 
-  // ── FETCH POSTS ───────────────────────────────────────────────
+  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -132,7 +126,7 @@ function Community() {
     fetchPosts()
   }, [authHeader])
 
-  // ── ACTIONS ───────────────────────────────────────────────────
+
   const handlePost = async () => {
     if (!content.trim()) return
     setPosting(true)
@@ -184,7 +178,7 @@ function Community() {
         })
       }
     } catch (err) {
-      // Add locally even if server fails
+     
       setPosts(prev => prev.map(p =>
         p._id === postId ? { ...p, comments: updatedComments } : p
       ))
@@ -192,7 +186,7 @@ function Community() {
     }
   }
 
-  // ── HELPERS ───────────────────────────────────────────────────
+  
   const isLiked = (post) => {
     const userId = user?._id
     return post.likes?.some(id =>
@@ -221,7 +215,6 @@ function Community() {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  // ── RENDER ────────────────────────────────────────────────────
   return (
     <div className="community-wrapper">
       <Navbar />

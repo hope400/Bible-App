@@ -451,7 +451,7 @@
 
 .entry-edit-textarea::placeholder { color: rgba(200,185,165,0.2); }
 
-/* ── ENTRY ACTION BUTTONS — improved ── */
+
 .entry-actions {
   display: flex;
   gap: 0.6rem;
@@ -503,7 +503,7 @@
   transform: translateY(-1px);
 }
 
-/* Cancel button — subtle ghost */
+
 .entry-btn.cancel {
   background: transparent;
   border-color: rgba(255,255,255,0.1);
@@ -515,7 +515,6 @@
   background: rgba(255,255,255,0.04);
 }
 
-/* Go to verse button — muted teal-ish */
 .entry-btn.go {
   background: transparent;
   border-color: rgba(184,145,58,0.2);
@@ -527,7 +526,7 @@
   background: rgba(184,145,58,0.07);
 }
 
-/* Delete button — red danger, pushed to the right */
+
 .entry-btn.delete {
   background: transparent;
   border-color: rgba(200,80,80,0.2);

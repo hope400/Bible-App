@@ -25,15 +25,15 @@ function applyTheme(themeId) {
   document.documentElement.classList.add(`theme-${themeId}`)
 }
 
-// Inner component so hooks work inside AuthProvider
+
 function AppInner() {
-  // ── Apply saved theme on every page load ──
+ 
   useEffect(() => {
     const saved = localStorage.getItem('bibble-theme') || 'sunset'
     applyTheme(saved)
   }, [])
 
-  // ── Start the reminder check — runs on ALL pages ──
+ 
   useReminder()
 
   return (
