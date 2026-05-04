@@ -65,7 +65,8 @@ function Community() {
   // ── SOCKET SETUP ──
   useEffect(() => {
     const socket = io(API_URL, {
-      transports: ['websocket', 'polling'],
+      transports: ['polling'],
+      upgrade: false,
       reconnection: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 1000,
