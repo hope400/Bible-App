@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════════════════════════
+   BIBBLE GLOBAL THEME SYSTEM
+   Applied via html.theme-* class — affects all pages
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── CSS VARIABLES per theme ── */
+:root {
+  --theme-bg:         #0d0b09;
+  --theme-navbar:     #0d0b09;
+  --theme-surface:    rgba(30, 22, 28, 0.9);
+  --theme-surface-lo: rgba(20, 14, 18, 0.7);
+  --theme-accent:     #d4956a;
+  --theme-accent-dim: #c4794a;
+  --theme-brand:      #d4956a;
+  --theme-text:       rgba(220, 205, 185, 0.92);
+  --theme-text-muted: rgba(200, 185, 165, 0.42);
+  --theme-border:     rgba(255, 255, 255, 0.06);
+  --theme-input-bg:   rgba(15, 10, 15, 0.75);
+  --theme-gradient:   linear-gradient(135deg, #c4794a 0%, #6a3020 50%, #0d0b09 100%);
+}
+
+html.theme-forest {
+  --theme-bg:         #080e09;
+  --theme-navbar:     #060c07;
+  --theme-surface:    rgba(10, 22, 12, 0.92);
+  --theme-surface-lo: rgba(6, 14, 7, 0.75);
+  --theme-accent:     #74b874;
+  --theme-accent-dim: #5a9e5a;
+  --theme-brand:      #74b874;
+  --theme-text:       rgba(190, 218, 185, 0.92);
+  --theme-text-muted: rgba(165, 200, 160, 0.42);
+  --theme-border:     rgba(100, 190, 100, 0.07);
+  --theme-input-bg:   rgba(6, 15, 7, 0.8);
+  --theme-gradient:   linear-gradient(135deg, #3a7a3a 0%, #1a4a1a 50%, #080e09 100%);
+}
+
+html.theme-ocean {
+  --theme-bg:         #06090f;
+  --theme-navbar:     #050810;
+  --theme-surface:    rgba(8, 14, 26, 0.92);
+  --theme-surface-lo: rgba(5, 10, 20, 0.75);
+  --theme-accent:     #5a9fd4;
+  --theme-accent-dim: #3a7eb4;
+  --theme-brand:      #5a9fd4;
+  --theme-text:       rgba(180, 208, 230, 0.92);
+  --theme-text-muted: rgba(155, 185, 210, 0.42);
+  --theme-border:     rgba(80, 150, 210, 0.07);
+  --theme-input-bg:   rgba(5, 10, 22, 0.8);
+  --theme-gradient:   linear-gradient(135deg, #1a5a8a 0%, #0a2d5a 50%, #06090f 100%);
+}
+
+/* ── Apply to page wrappers — covers ALL pages ── */
+body,
+.dashboard,
+.journal-wrapper,
+.community-wrapper,
+.settings-wrapper,
+.reader-wrapper,
+.lib-wrapper,
+.dv-wrapper,
+.favorites-page {
+  background: var(--theme-bg) !important;
+  transition: background 0.45s ease, color 0.45s ease;
+}
+
+/* Navbar */
+.navbar {
+  background: var(--theme-navbar) !important;
+  border-bottom-color: var(--theme-border) !important;
+  transition: background 0.45s ease;
+}
+
+.navbar-brand {
+  color: var(--theme-brand) !important;
+}
+
+.navbar-link.active {
+  color: var(--theme-accent) !important;
+  border-bottom-color: var(--theme-accent) !important;
+}
+
+.nav-avatar {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-accent-dim)) !important;
+}
+
+/* Auth pages */
+.auth-left {
+  background:
+    linear-gradient(to bottom, rgba(5,3,8,0.65) 0%, rgba(5,3,5,0.78) 100%),
+    var(--theme-gradient) !important;
+  transition: background 0.45s ease;
+}
+
+.auth-brand,
+.auth-link {
+  color: var(--theme-accent) !important;
+}
+
+.auth-btn {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-accent-dim)) !important;
+}
+
+
+.settings-section,
+.compose-box,
+.live-box,
+.community-mood-card,
+.post-card,
+.journal-entry,
+.new-entry-form {
+  background: var(--theme-surface) !important;
+  border-color: var(--theme-border) !important;
+  transition: background 0.35s ease;
+}
+
+/* Accent text color on all pages */
+.settings-title,
+.journal-title,
+.community-feed-title,
+.lib-title,
+.dv-title,
+.fav-title,
+.dashboard-hero,
+.navbar-brand {
+  color: var(--theme-brand) !important;
+}
+
+/* Input fields across pages */
+.field-input,
+.compose-textarea,
+.compose-verse-input,
+.comment-input,
+.new-entry-title-input,
+.new-entry-textarea,
+.journal-search {
+  background: var(--theme-input-bg) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-text) !important;
+  transition: background 0.35s ease;
+}
+
+
+.compose-submit-btn,
+.new-entry-save,
+.save-btn,
+.journal-empty-btn:hover,
+.fav-empty-btn:hover {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-accent-dim)) !important;
+}
+
+.entry-btn.save,
+.auth-btn {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-accent-dim)) !important;
+  border-color: transparent !important;
+}
+
+
+.post-verse-ref,
+.entry-ref,
+.pulse-chip-highlight,
+.compose-title,
+.section-title,
+.field-label,
+.sidebar-label,
+.mood-card-eyebrow,
+.dv-eyebrow,
+.lib-eyebrow,
+.journal-eyebrow {
+  color: var(--theme-accent) !important;
+}
+
+
+.dashboard-hero {
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.12) 0%,
+    rgba(0,0,0,0.35) 100%
+  ), var(--theme-gradient) !important;
+}
+
+
+::-webkit-scrollbar-thumb { background: var(--theme-accent-dim) !important; opacity: 0.4; }
