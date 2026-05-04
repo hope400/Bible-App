@@ -87,14 +87,18 @@ function Community() {
       setRecentActivity(prev => [activity, ...prev].slice(0, 6))
     })
 
-    socket.on('post:created', (newPost) => {
-      setPosts(prev => {
-        if (prev.find(p => p._id === newPost._id)) return prev
-        return [newPost, ...prev]
-      })
-      addToast('✨', 'New reflection shared',
-        `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
-    })
+
+socket.on('post:created', (newPost) => {
+  setPosts(prev => {
+    if (prev.find(p => p._id === newPost._id)) return prev
+    return [newPost, ...prev]
+  })
+  // Only toast if it's NOT the current user's post
+  if (newPost.userId?._id !== user?._id && newPost.userId !== user?._id) {
+    addToast('✨', 'New reflection shared',
+      `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
+  }
+})
 
     socket.on('post:deleted', ({ postId }) => {
       setPosts(prev => prev.filter(p => p._id !== postId))
@@ -140,9 +144,14 @@ const handlePost = async () => {
     })
     setContent('')
     setVerseRef('')
+
   } catch (err) {
-    addToast('⚠️', 'Could not post', 'Something went wrong. Try again.')
+    console.error('Post error:', err)
+    if (err.response?.status !== 201) {
+      addToast('⚠️', 'Could not post', 'Something went wrong. Try again.')
+    }
   } finally {
+
     setPosting(false)
   }
 }
