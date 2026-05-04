@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
-   BIBBLE GLOBAL THEME SYSTEM
-   Applied via html.theme-* class — affects all pages
-   ═══════════════════════════════════════════════════════════════ */
 
-/* ── CSS VARIABLES per theme ── */
 :root {
   --theme-bg:         #0d0b09;
   --theme-navbar:     #0d0b09;

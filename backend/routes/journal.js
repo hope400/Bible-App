@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Journal = require('../models/Journal');
 const { protect } = require('../middleware/auth');
-const socketEmitter = require('../socket'); // No circular dependency!
+const socketEmitter = require('../socket'); 
 
 // CREATE
 router.post('/', protect, async (req, res) => {
@@ -12,7 +12,7 @@ router.post('/', protect, async (req, res) => {
       userId: req.user._id, title, body, mood, verseRef, isPrivate
     });
 
-    // Broadcast real activity to community — this never blocks the save
+   
     socketEmitter.emit('activity:new', {
       name: req.user.name,
       action: mood

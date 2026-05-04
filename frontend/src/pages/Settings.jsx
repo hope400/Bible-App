@@ -44,7 +44,7 @@ function Settings() {
     applyTheme(themeId)
   }
 
-  // ── Real notification permission handler ─────────────────────
+ 
   const handleStreakToggle = async () => {
     const newValue = !streakReminder
 
