@@ -94,6 +94,8 @@ function Community() {
       setRecentActivity(prev => [activity, ...prev].slice(0, 6))
     })
 
+    
+
     socket.on('post:created', (newPost) => {
       setPosts(prev => {
         if (prev.find(p => p._id === newPost._id)) return prev
@@ -104,6 +106,13 @@ function Community() {
           `${newPost.userId?.name || 'Someone'} just posted to the wall.`)
       }
     })
+
+    // Add this inside the socket useEffect, with the other socket.on() calls:
+socket.on('post:updated', (updatedPost) => {
+  setPosts(prev => prev.map(p =>
+    p._id === updatedPost._id ? updatedPost : p
+  ))
+})
 
     socket.on('post:deleted', ({ postId }) => {
       setPosts(prev => prev.filter(p => p._id !== postId))
@@ -177,27 +186,50 @@ function Community() {
   }
 
   const handleComment = async (postId) => {
-    const text = commentInputs[postId]?.trim()
-    if (!text) return
-    const currentComments = posts.find(p => p._id === postId)?.comments || []
-    const newComment = { userId: { name: user?.name || 'You', _id: user?._id }, text, _id: Date.now() }
-    setPosts(prev => prev.map(p =>
-      p._id === postId ? { ...p, comments: [...currentComments, newComment] } : p
-    ))
-    setCommentInputs(prev => ({ ...prev, [postId]: '' }))
-    try {
-      const res = await axios.put(`${API_URL}/api/posts/${postId}`,
-        { comments: [...currentComments, { userId: user?._id, text }] }, authHeader())
-      setPosts(prev => prev.map(p => p._id === postId ? res.data : p))
-      if (socketRef.current) {
-        socketRef.current.emit('user:action', {
-          action: 'commented on a reflection', icon: '💬'
-        })
-      }
-    } catch (err) {
-      console.error('Comment failed:', err)
-    }
+  const text = commentInputs[postId]?.trim()
+  if (!text) return
+
+  // Build the new comment object
+  const newComment = {
+    _id: Date.now(), // temporary local ID
+    userId: { _id: user?._id, name: user?.name || 'You' },
+    text,
+    createdAt: new Date().toISOString()
   }
+
+  // ── Update UI IMMEDIATELY — don't wait for server ──
+  setPosts(prev => prev.map(p => {
+    if (p._id !== postId) return p
+    return { ...p, comments: [...(p.comments || []), newComment] }
+  }))
+
+  // Clear the input immediately
+  setCommentInputs(prev => ({ ...prev, [postId]: '' }))
+
+  // ── Then save to server in the background ──
+  try {
+    const currentPost = posts.find(p => p._id === postId)
+    const updatedComments = [
+      ...(currentPost?.comments || []),
+      { userId: user?._id, text }
+    ]
+    await axios.put(
+      `${API_URL}/api/posts/${postId}`,
+      { comments: updatedComments },
+      authHeader()
+    )
+    // Emit real activity so community sees it
+    if (socketRef.current) {
+      socketRef.current.emit('user:action', {
+        action: 'commented on a reflection',
+        icon: '💬'
+      })
+    }
+  } catch (err) {
+    console.error('Comment save failed:', err)
+    // Don't remove the comment from UI — it will sync on next refresh
+  }
+}
 
   const isLiked = (post) => {
     const userId = user?._id

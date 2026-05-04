@@ -47,15 +47,25 @@ router.get('/:id', protect, async (req, res) => {
 });
 
 // UPDATE
+// UPDATE a post (handles comment additions properly)
 router.put('/:id', protect, async (req, res) => {
   try {
-    const post = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate('userId', 'name');
-    res.json(post);
+    const post = await Post.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).populate('userId', 'name')
+
+    // If a comment was added, broadcast the updated post to everyone
+    if (req.body.comments !== undefined) {
+      socketEmitter.emit('post:updated', post)
+    }
+
+    res.json(post)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message })
   }
-});
+})
 
 // LIKE / UNLIKE
 router.put('/:id/like', protect, async (req, res) => {
